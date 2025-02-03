@@ -4,6 +4,12 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { decryptFlag } from "@/lib/decryption"; // Import the decryption logic
 
+interface FlagData {
+  obfuscatedPart1: string;
+  obfuscatedPart2: string;
+  error?: string;
+}
+
 export default function Level2() {
   const [obfuscatedPart1, setObfuscatedPart1] = useState(""); // Obfuscated part 1
   const [obfuscatedPart2, setObfuscatedPart2] = useState(""); // Obfuscated part 2
@@ -18,7 +24,7 @@ export default function Level2() {
     const fetchFlag = async () => {
       try {
         const res = await fetch("/api/flags?level=2");
-        const data = await res.json();
+        const data: FlagData = await res.json();
         if (!res.ok) throw new Error(data.error || "Failed to fetch flag");
 
         // Get the obfuscated flag parts
@@ -42,7 +48,7 @@ export default function Level2() {
 
       // Set the decrypted flag to be inspected
       setDecryptedFlag(fullFlag);
-      setHintMessage("Maybe 'inspecting' me will help find a 'hidden' change to the 'elements'🤭. ");
+      setHintMessage("Maybe \\'inspecting\\' me will help find a \\'hidden\\' change to the \\'elements\\'🤭. ");
     } catch (err) {
       setHintMessage("Something feels off... Maybe you should try again?");
     }

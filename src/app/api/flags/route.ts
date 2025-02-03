@@ -5,11 +5,9 @@ import { db } from "@/db/db";
 import { flags } from "@/db/schema";
 import { eq } from "drizzle-orm";
 
-export async function GET(req: Request) {
+export async function GET(req: Request): Promise<Response> {
   const url = new URL(req.url);
   const levelParam = url.searchParams.get("level");
-  
-  //console.log("Received request with level parameter:", levelParam);
 
   try {
     const level = levelParam ? Number(levelParam) : 1;
@@ -52,7 +50,7 @@ export async function GET(req: Request) {
   } catch (error) {
     console.error("Server error:", error);
     return NextResponse.json(
-      { error: "Internal server error", details: error instanceof Error ? error.message : 'Unknown error' },
+      { error: "Internal server error", details: error instanceof Error ? error.message : "Unknown error" },
       { status: 500 }
     );
   }

@@ -1,14 +1,14 @@
 "use client";
 
 import { LevelLayout } from "@/components/level-layout";
-import { useState } from "react";
+import { useState, FormEvent } from "react";
 
 export default function Level6() {
   const [flag, setFlag] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setError("");
     setLoading(true);
@@ -47,13 +47,12 @@ export default function Level6() {
           The flag is accessible by navigating to a hidden URL path. Can you figure out which one it is?
         </p>
         <p className="mt-4">
-          Hint: The route is the baseurl/[name of your favorite student chapter of TCE-CSE].😁😁😁
+          Hint: The route is the baseurl/\[name of your favorite student chapter of TCE-CSE\].😁😁😁
         </p>
         <p>
-          PS.Opening a new tab might be faster
+          PS. Opening a new tab might be faster
         </p>
 
-        
         {error && <p className="text-red-500 mt-4">{error}</p>}
       </div>
     </LevelLayout>

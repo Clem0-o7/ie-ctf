@@ -5,7 +5,12 @@ import { eq } from "drizzle-orm";
 import { flags, users } from "@/db/schema";
 import { db } from "@/db/db";
 import { getCurrentUser, getHighestCompletedLevel } from "@/lib/auth";
-import { decryptFlag } from "@/lib/decryption"; // Import the decryption logic
+import { decryptFlag } from "@/lib/decryption";
+
+interface RequestBody {
+  level: number;
+  flag: string;
+}
 
 export async function POST(request: Request) {
   try {
@@ -16,7 +21,7 @@ export async function POST(request: Request) {
     }
 
     // Get request data
-    const { level, flag } = await request.json();
+    const { level, flag }: RequestBody = await request.json();
     
     // Validate level number
     if (typeof level !== 'number' || level < 0 || level > 6) {

@@ -5,7 +5,7 @@ import { registerSchema } from "@/lib/validation";
 import { createSession, hashPassword } from "@/lib/auth";
 import { NextResponse } from "next/server";
 
-export async function POST(req: Request) {
+export async function POST(req: Request): Promise<NextResponse> {
   try {
     const body = await req.json();
     const data = registerSchema.parse(body);

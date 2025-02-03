@@ -3,9 +3,9 @@ import { LevelLayout } from "@/components/level-layout";
 import { useState } from "react";
 
 export default function Level4() {
-  const [validationMessage, setValidationMessage] = useState("");
-  const [hintMessage, setHintMessage] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [validationMessage, setValidationMessage] = useState<string>("");
+  const [hintMessage, setHintMessage] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -47,7 +47,7 @@ export default function Level4() {
 
       // Provide a nudge towards checking network activity
       setHintMessage(
-        "Every time you interact with a website, data moves across the '---work'. Maybe getting the flag after a 'reload' will help with your inspection of the'---work'."
+        "Every time you interact with a website, data moves across the '---work'. Maybe getting the flag after a 'reload' will help with your inspection of the '---work'."
       );
     } catch (err: any) {
       console.error("Error fetching hidden flag data:", err);
@@ -62,7 +62,7 @@ export default function Level4() {
         <div className="mt-4 space-y-4">
           <h2 className="text-2xl font-bold">Level 4: Network Forensics</h2>
           <p>
-            Websites constantly send and receive data through APIs. Sometimes, what's sent and received is more important than what's displayed.
+            Websites constantly send and receive data through APIs. Sometimes, what&apos;s sent and received is more important than what&apos;s displayed.
           </p>
 
           <p>
@@ -77,8 +77,6 @@ export default function Level4() {
           </button>
 
           {hintMessage && <p className="mt-4 text-yellow-400">{hintMessage}</p>}
-
-         
 
           {validationMessage && (
             <p className="text-red-500 mt-4">{validationMessage}</p>

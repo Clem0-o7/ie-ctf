@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import LetterGlitch from "@/components/LetterGlitch"
 
-export default function Home() {
+const Home: React.FC = () => {
   return (
     <div className="min-h-screen flex items-center justify-center relative overflow-hidden">
       <LetterGlitch />
@@ -27,3 +27,4 @@ export default function Home() {
   )
 }
 
+export default Home;

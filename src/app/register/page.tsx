@@ -8,8 +8,8 @@ import { RegisterInput, registerSchema } from "@/lib/validation";
 
 export default function RegisterPage() {
     const router = useRouter();
-    const [error, setError] = useState("");
-    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<string>("");
+    const [loading, setLoading] = useState<boolean>(false);
 
     async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
@@ -17,7 +17,7 @@ export default function RegisterPage() {
         setLoading(true);
 
         const formData = new FormData(event.currentTarget);
-        const data = Object.fromEntries(formData.entries());
+        const data: RegisterInput = Object.fromEntries(formData.entries()) as RegisterInput;
 
         try {
             const validated = registerSchema.parse(data);

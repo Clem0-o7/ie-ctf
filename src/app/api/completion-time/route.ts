@@ -1,10 +1,7 @@
-// @/app/api/completion-time/route.ts
 import { NextResponse } from "next/server";
-import { db } from "@/db/db";
-import { users } from "@/db/schema";
 import { getCurrentUser } from "@/lib/auth";
 
-export async function GET(req: Request) {
+export async function GET(req: Request): Promise<NextResponse> {
     try {
         // Get the current user from the session
         const user = await getCurrentUser();
@@ -32,6 +29,6 @@ export async function GET(req: Request) {
         return NextResponse.json({ timeTaken: `${days} days, ${hours} hours, ${minutes} minutes, and ${seconds} seconds` });
     } catch (error) {
         console.error("Error fetching completion time:", error);
-        return NextResponse.json({ error: "Internal server error", details: error instanceof Error ? error.message : 'Unknown error' }, { status: 500 });
+        return NextResponse.json({ error: "Internal server error", details: error instanceof Error ? error.message : "Unknown error" }, { status: 500 });
     }
 }

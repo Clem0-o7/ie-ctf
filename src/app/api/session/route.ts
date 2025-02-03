@@ -2,14 +2,20 @@
 import { getCurrentUser, getHighestCompletedLevel, logout } from "@/lib/auth";
 import { NextResponse } from "next/server";
 
+interface User {
+  id: string;
+  name: string;
+  email: string;
+}
+
 export async function GET() {
   try {
-    const user = await getCurrentUser();
+    const user: User | null = await getCurrentUser();
     if (!user) {
       return NextResponse.json({ authenticated: false });
     }
 
-    const highestLevel = await getHighestCompletedLevel(user);
+    const highestLevel: number = await getHighestCompletedLevel(user);
 
     return NextResponse.json({
       authenticated: true,

@@ -1,4 +1,3 @@
-// @/app/api/login/route.ts
 import { db } from "@/db/db";
 import { users } from "@/db/schema";
 import { loginSchema } from "@/lib/validation";
@@ -6,7 +5,7 @@ import { comparePasswords, createSession } from "@/lib/auth";
 import { eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 
-export async function POST(req: Request) {
+export async function POST(req: Request): Promise<NextResponse> {
   try {
     const body = await req.json();
     const data = loginSchema.parse(body);

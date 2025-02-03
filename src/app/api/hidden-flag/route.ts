@@ -1,6 +1,6 @@
 import { decryptFlag } from "@/lib/decryption";
 
-export async function GET(req: Request) {
+export async function GET(req: Request): Promise<Response> {
     try {
         const level = "4"; // Hardcoded level
 
@@ -11,8 +11,6 @@ export async function GET(req: Request) {
         // Fetch the obfuscated flag parts
         const response = await fetch(flagsApiUrl);
         const data = await response.json();
-
-        
 
         if (!response.ok || !data.obfuscatedPart1 || !data.obfuscatedPart2) {
             throw new Error(data.error || "Invalid flag data received");

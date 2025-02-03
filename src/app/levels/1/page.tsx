@@ -6,6 +6,12 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { decryptFlag } from "@/lib/decryption"; // Import the decrypt function
 
+interface FlagResponse {
+  obfuscatedPart1: string;
+  obfuscatedPart2: string;
+  error?: string;
+}
+
 export default function Level1() {
   const [flagRevealed, setFlagRevealed] = useState(false);
   const [flag, setFlag] = useState<string | null>(null); // State to store fetched flag
@@ -18,13 +24,13 @@ export default function Level1() {
     try {
       // Fetch flag dynamically from the API (obfuscated flag parts)
       const response = await fetch(`/api/flags?level=${level}`);
-      const data = await response.json();
+      const data: FlagResponse = await response.json();
 
       if (response.ok) {
         const { obfuscatedPart1, obfuscatedPart2 } = data; // Assuming the API returns obfuscated parts
 
         // Decrypt the flag using the imported decryptFlag function
-        const decryptedFlag = decryptFlag(obfuscatedPart1, obfuscatedPart2, 'ctfkey');
+        const decryptedFlag = decryptFlag(obfuscatedPart1, obfuscatedPart2, "ctfkey");
 
         if (decryptedFlag) {
           // Encode the decrypted flag into Base64
@@ -32,12 +38,12 @@ export default function Level1() {
           setFlag(decryptedFlag);
           setEncodedFlag(encoded);
           console.log(`Flag: ${encoded}`); // Log the encoded flag for debugging
-          alert("Its time to learn about logs my friend");   
+          alert("It's time to learn about logs my friend");   
         } else {
           setError("Failed to decrypt the flag.");
         }
       } else {
-        setError(data.error); // Handle errors from the API (if any)
+        setError(data.error || "Unknown error occurred."); // Handle errors from the API (if any)
       }
     } catch (error) {
       setError("Failed to fetch or decrypt the flag. Please try again later.");
@@ -62,7 +68,6 @@ export default function Level1() {
         {flagRevealed && encodedFlag && (
           <div>
             <p className="mt-4 text-green-400">P.S. Take a quick crash-course on tetrasexagesimal encoding.</p>
-            
           </div>
         )}
 

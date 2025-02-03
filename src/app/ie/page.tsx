@@ -6,6 +6,11 @@ import LetterGlitch from "@/components/LetterGlitch"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 
+interface FlagData {
+  obfuscatedPart1: string
+  obfuscatedPart2: string
+}
+
 export default function HiddenFlag() {
   const [flag, setFlag] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
@@ -16,7 +21,7 @@ export default function HiddenFlag() {
     const fetchFlag = async () => {
       try {
         const res = await fetch("/api/flags?level=6")
-        const data = await res.json()
+        const data: FlagData = await res.json()
 
         if (!res.ok) {
           throw new Error(data.error || "Failed to fetch flag")
@@ -55,7 +60,7 @@ export default function HiddenFlag() {
             ) : (
               <div className="space-y-4">
                 <p className="text-yellow-400 text-center">
-                  You've successfully infiltrated the system and retrieved the flag!
+                  You&apos;ve successfully infiltrated the system and retrieved the flag!
                 </p>
                 <div className="flex justify-center">
                   <Button

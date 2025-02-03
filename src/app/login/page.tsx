@@ -1,15 +1,15 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { LoginInput, loginSchema } from "@/lib/validation";
+import { loginSchema } from "@/lib/validation";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import LetterGlitch from "@/components/LetterGlitch";
 
 export default function LoginPage() {
     const router = useRouter();
-    const [error, setError] = useState("");
-    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<string>("");
+    const [loading, setLoading] = useState<boolean>(false);
 
     async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();

@@ -1,14 +1,14 @@
 "use client";
 import { LevelLayout } from "@/components/level-layout";
-import { useState } from "react";
+import { useState, MouseEvent } from "react";
 import { Button } from "@/components/ui/button";
 
 export default function Level0() {
-  const [flagRevealed, setFlagRevealed] = useState(false);
+  const [flagRevealed, setFlagRevealed] = useState<boolean>(false);
 
   const FLAG = "123456-IE-ABCDEF"; // Predefined flag for Level 0
 
-  const handleRevealFlag = () => {
+  const handleRevealFlag = (event: MouseEvent<HTMLButtonElement>) => {
     console.log(`Your flag: ${FLAG}`);
     setFlagRevealed(true);
     alert("P.S. I hope you know how to check logs in a browser!");
@@ -20,7 +20,7 @@ export default function Level0() {
         <h2 className="text-2xl font-bold">Welcome to Level 0 (Tutorial)</h2>
         <p>
           This is the tutorial level to help you understand how flag submission works.
-          In each level, you'll need to submit the correct flag to progress.
+          In each level, you&apos;ll need to submit the correct flag to progress.
         </p>
         <p>
           Click the button below to get your flag. But where will it appear? 🤔

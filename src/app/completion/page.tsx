@@ -7,6 +7,11 @@ import Link from "next/link"
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 
+interface CompletionTimeResponse {
+  timeTaken: string;
+  error?: string;
+}
+
 export default function CompletionPage() {
   const [timeTaken, setTimeTaken] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
@@ -17,7 +22,7 @@ export default function CompletionPage() {
     const fetchCompletionTime = async () => {
       try {
         const res = await fetch("/api/completion-time")
-        const data = await res.json()
+        const data: CompletionTimeResponse = await res.json()
 
         if (!res.ok) {
           throw new Error(data.error || "Failed to fetch completion time")
@@ -36,20 +41,18 @@ export default function CompletionPage() {
 
   const handleLogout = async () => {
     try {
-      const res = await fetch("/api/session", { method: "POST" });  // Make a POST request to logout
-      const data = await res.json();
+      const res = await fetch("/api/session", { method: "POST" })
+      const data: { error?: string } = await res.json()
   
       if (res.ok) {
-        // Redirect to homepage after successful logout
-        router.push("/");
+        router.push("/")
       } else {
-        setError(data.error || "Logout failed");
+        setError(data.error || "Logout failed")
       }
     } catch (error: any) {
-      setError(error.message || "Something went wrong.");
+      setError(error.message || "Something went wrong.")
     }
   }
-  
 
   return (
     <>
@@ -60,7 +63,7 @@ export default function CompletionPage() {
             <CardTitle className="text-4xl font-bold text-center text-green-400">🎉 Mission Accomplished</CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
-            <p className="text-xl">You've successfully completed all levels of the IE CTF challenge!</p>
+            <p className="text-xl">You&apos;ve successfully completed all levels of the IE CTF challenge!</p>
             {loading ? (
               <div className="flex justify-center">
                 <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-green-500"></div>
@@ -95,4 +98,3 @@ export default function CompletionPage() {
     </>
   )
 }
-

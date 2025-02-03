@@ -17,11 +17,11 @@ export const metadata: Metadata = {
   description: "Brought to you by IE Student Chapter - TCE",
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
+interface RootLayoutProps {
   children: React.ReactNode;
-}>) {
+}
+
+export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="en">
       <body
