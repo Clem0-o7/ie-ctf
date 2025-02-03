@@ -3,7 +3,7 @@ import { db } from "@/db/db";
 import { flags, users } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { getCurrentUser } from "./auth";
-import { decryptFlag } from "@/lib/crypto";
+import { decryptFlag } from "./decryption";
 
 interface FlagData {
   encryptedFlag: string;
