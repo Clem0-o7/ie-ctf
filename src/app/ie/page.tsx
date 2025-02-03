@@ -21,12 +21,13 @@ export default function HiddenFlag() {
     const fetchFlag = async () => {
       try {
         const res = await fetch("/api/flags?level=6")
-        const data: FlagData = await res.json()
-
+        
         if (!res.ok) {
+          const data = await res.json() // This is where the error data will be available if any
           throw new Error(data.error || "Failed to fetch flag")
         }
 
+        const data: FlagData = await res.json()
         const { obfuscatedPart1, obfuscatedPart2 } = data
         const decryptedFlag = decryptFlag(obfuscatedPart1, obfuscatedPart2, "ctfkey")
         setFlag(decryptedFlag)
