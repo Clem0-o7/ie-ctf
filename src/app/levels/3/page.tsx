@@ -1,6 +1,7 @@
 "use client";
 import { LevelLayout } from "@/components/level-layout";
 import { useState } from "react";
+import Image from "next/image";
 
 export default function Level3() {
   const [validationMessage, setValidationMessage] = useState("");
@@ -44,27 +45,31 @@ export default function Level3() {
     <LevelLayout level={3}>
       <div className="prose text-white">
         <div className="mt-4 space-y-4">
-        <h2 className="text-2xl font-bold">Level 3: Steaganography</h2>
+          <h2 className="text-2xl font-bold">Level 3: Steaganography</h2>
           <p>
             What could this image be hiding? Click on it to start your search! 
           </p>
 
           {/* Image display */}
           <div className="flex justify-center">
-            <img
-              src="/crypto.png" 
-              alt="Hidden Flag Image"
-              className="cursor-pointer max-w-md"
-              onClick={() => {
-                handleImageClick();
-                const link = document.createElement("a");
-                link.href = "/crypto.png";
-                link.download = "crypto.png";
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-              }}
-            />
+            <div onClick={handleImageClick} className="cursor-pointer">
+              <Image
+                src="/crypto.png" 
+                alt="Hidden Flag Image"
+                width={500}
+                height={500}
+                className="max-w-md"
+                onClick={() => {
+                  handleImageClick();
+                  const link = document.createElement("a");
+                  link.href = "/crypto.png";
+                  link.download = "crypto.png";
+                  document.body.appendChild(link);
+                  link.click();
+                  document.body.removeChild(link);
+                }}
+              />
+            </div>
           </div>
           {hintMessage && (
             <p className="mt-4 text-yellow-400">{hintMessage}</p>
