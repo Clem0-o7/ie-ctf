@@ -8,7 +8,19 @@ import { eq } from "drizzle-orm";
 // Initialize JWT secret
 const secret = new TextEncoder().encode(process.env.JWT_SECRET!);
 
-async function verifyAuth(request: NextRequest) {
+interface User {
+    id: string;
+    level0?: boolean;
+    level1?: boolean;
+    level2?: boolean;
+    level3?: boolean;
+    level4?: boolean;
+    level5?: boolean;
+    level6?: boolean;
+    [key: string]: boolean | string | undefined;
+}
+
+async function verifyAuth(request: NextRequest): Promise<User | null> {
     const token = request.cookies.get("session")?.value;
 
     if (!token) {
@@ -23,7 +35,7 @@ async function verifyAuth(request: NextRequest) {
             .select()
             .from(users)
             .where(eq(users.id, userId))
-            .limit(1) as unknown as { [key: string]: boolean | string }[];
+            .limit(1) as unknown as User[];
 
         return user;
     } catch {
@@ -36,9 +48,9 @@ export async function middleware(request: NextRequest) {
 
     // Allow public assets and API routes
     if (
-        pathname.startsWith('/_next') ||
-        pathname.startsWith('/api') ||
-        pathname.startsWith('/static')
+        pathname.startsWith("/_next") ||
+        pathname.startsWith("/api") ||
+        pathname.startsWith("/static")
     ) {
         return NextResponse.next();
     }
@@ -47,17 +59,17 @@ export async function middleware(request: NextRequest) {
     const user = await verifyAuth(request);
     
     // Handle authentication for protected routes
-    if (pathname.startsWith('/levels') || pathname === '/completion') {
+    if (pathname.startsWith("/levels") || pathname === "/completion") {
         if (!user) {
-            return NextResponse.redirect(new URL('/login', request.url));
+            return NextResponse.redirect(new URL("/login", request.url));
         }
 
-        if (pathname.startsWith('/levels/')) {
-            const level = parseInt(pathname.split('/').pop() || '0');
+        if (pathname.startsWith("/levels/")) {
+            const level = parseInt(pathname.split("/").pop() || "0");
         
             // Validate level number
             if (isNaN(level) || level < 0 || level > 6) {
-                return NextResponse.redirect(new URL('/', request.url));
+                return NextResponse.redirect(new URL("/", request.url));
             }
         
             // Allow access to level 0 (tutorial) for all authenticated users
@@ -66,7 +78,7 @@ export async function middleware(request: NextRequest) {
             }
         
             // Check if the previous level is completed
-            const previousLevelComplete = user[`level${level - 1}` as keyof typeof user];
+            const previousLevelComplete = user[`level${level - 1}` as keyof User];
         
             if (!previousLevelComplete) {
                 // Find the first uncompleted level
@@ -85,7 +97,7 @@ export async function middleware(request: NextRequest) {
         
 
         // Protect completion page
-        if (pathname === '/completion' && !user.level6) {
+        if (pathname === "/completion" && !user.level6) {
             const highestLevel = [5, 4, 3, 2, 1, 0].find(
                 level => user[`level${level}`]
             ) ?? 0;
@@ -96,7 +108,7 @@ export async function middleware(request: NextRequest) {
     }
 
     // Handle authentication pages for logged-in users
-    if (pathname === '/login' || pathname === '/register') {
+    if (pathname === "/login" || pathname === "/register") {
         if (user) {
             // Find highest incomplete level
             let nextLevel = 0;
@@ -111,7 +123,7 @@ export async function middleware(request: NextRequest) {
     }
 
     // Allow access to home page and other public routes
-    if (pathname === '/') {
+    if (pathname === "/") {
         return NextResponse.next();
     }
 
@@ -126,7 +138,6 @@ export const config = {
          * - _next/image (image optimization files)
          * - favicon.ico (favicon file)
          */
-        '/((?!_next/static|_next/image|favicon.ico).*)',
+        "/((?!_next/static|_next/image|favicon.ico).*)",
     ],
 };
-

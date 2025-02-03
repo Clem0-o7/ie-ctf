@@ -3,14 +3,20 @@ import { db } from "@/db/db";
 import { flags, users } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { getCurrentUser } from "./auth";
-import { compare } from "bcryptjs";
 import { decryptFlag } from "@/lib/crypto";
 
-// @/lib/flags.ts
+interface FlagData {
+  encryptedFlag: string;
+  iv: string;
+}
 
-export async function validateFlag(level: number, submittedFlag: string) {
+interface User {
+  id: string;
+}
+
+export async function validateFlag(level: number, submittedFlag: string): Promise<boolean> {
   try {
-    const [flagData] = await db
+    const [flagData]: FlagData[] = await db
       .select()
       .from(flags)
       .where(eq(flags.level, level))
@@ -32,7 +38,7 @@ export async function validateFlag(level: number, submittedFlag: string) {
 
     if (isValid) {
       // Update user progress if flag is valid
-      const user = await getCurrentUser();
+      const user: User | null = await getCurrentUser();
       if (!user) throw new Error("Not authenticated");
 
       await db
@@ -55,6 +61,3 @@ export async function validateFlag(level: number, submittedFlag: string) {
     throw new Error("Failed to validate flag");
   }
 }
-
-
-

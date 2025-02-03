@@ -20,7 +20,7 @@ export async function comparePasswords(
   return compare(password, hashedPassword);
 }
 
-export async function createSession(userId: string) {
+export async function createSession(userId: string): Promise<string> {
   const token = await new SignJWT({ userId })
     .setProtectedHeader({ alg })
     .setExpirationTime("7d")
@@ -36,7 +36,7 @@ export async function createSession(userId: string) {
   return token;
 }
 
-export async function getCurrentUser() {
+export async function getCurrentUser(): Promise<any | null> {
   const cookieStore = await cookies();
   const token = cookieStore.get("session")?.value;
   if (!token) return null;
@@ -65,7 +65,7 @@ export async function getHighestCompletedLevel(user: any): Promise<number> {
   return 0;
 }
 
-export async function logout() {
+export async function logout(): Promise<void> {
   const cookieStore = await cookies();
   cookieStore.delete("session");
 }

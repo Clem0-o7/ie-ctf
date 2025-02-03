@@ -13,12 +13,12 @@ export function useWindowSize(): WindowSize {
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      function handleResize() {
+      const handleResize = () => {
         setWindowSize({
           width: window.innerWidth,
           height: window.innerHeight,
         });
-      }
+      };
 
       window.addEventListener("resize", handleResize);
       handleResize();

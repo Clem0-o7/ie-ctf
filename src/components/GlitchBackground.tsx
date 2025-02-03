@@ -1,10 +1,10 @@
 "use client"
 
-import type React from "react"
+import type { FC } from "react"
 import { useEffect, useRef } from "react"
 import { useWindowSize } from "@/hooks/useWindowSize"
 
-const GlitchBackground: React.FC = () => {
+const GlitchBackground: FC = () => {
     const canvasRef = useRef<HTMLCanvasElement>(null)
     const { width, height } = useWindowSize()
 

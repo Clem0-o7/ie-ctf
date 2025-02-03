@@ -9,7 +9,7 @@ export interface UserProgress {
 }
 
 export async function getUserProgress(): Promise<UserProgress | null> {
-  const user = await getCurrentUser();
+  const user: User | null = await getCurrentUser();
   
   if (!user) {
     return null; // If user not found, return null

@@ -1,8 +1,7 @@
 //@/components/LetterGlitch.tsx
 "use client"
 
-import type React from "react"
-import { useEffect, useRef } from "react"
+import React, { useEffect, useRef } from "react"
 
 const LetterGlitch: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -53,4 +52,3 @@ const LetterGlitch: React.FC = () => {
 }
 
 export default LetterGlitch
-
