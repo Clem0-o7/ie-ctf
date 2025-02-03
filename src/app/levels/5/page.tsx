@@ -1,66 +1,70 @@
-"use client";
-import { LevelLayout } from "@/components/level-layout";
-import { useState, useEffect } from "react";
-import { decryptFlag } from "@/lib/decryption"; // Import the decryption logic
+"use client"
+import { LevelLayout } from "@/components/level-layout"
+import { useState, useEffect } from "react"
+import { decryptFlag } from "@/lib/decryption" // Import the decryption logic
 
 function caesarEncrypt(text: string, shift: number): string {
   return text
     .split("")
     .map((char) => {
-      const charCode = char.charCodeAt(0);
+      const charCode = char.charCodeAt(0)
       if (char.match(/[a-zA-Z]/)) {
-        const base = char === char.toUpperCase() ? 65 : 97; // A = 65, a = 97
-        return String.fromCharCode(((charCode - base + shift) % 26) + base);
+        const base = char === char.toUpperCase() ? 65 : 97 // A = 65, a = 97
+        return String.fromCharCode(((charCode - base + shift) % 26) + base)
       }
-      return char; // Non-alphabetic characters remain unchanged
+      return char // Non-alphabetic characters remain unchanged
     })
-    .join("");
+    .join("")
 }
 
 interface FlagData {
-  obfuscatedPart1: string;
-  obfuscatedPart2: string;
+  obfuscatedPart1: string
+  obfuscatedPart2: string
 }
 
 export default function Level5() {
-  const [encryptedFlag, setEncryptedFlag] = useState<string>("");
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string>("");
-  const key = "ctfkey";
+  const [encryptedFlag, setEncryptedFlag] = useState<string>("")
+  const [loading, setLoading] = useState<boolean>(true)
+  const [error, setError] = useState<string>("")
+  const key = "ctfkey"
 
   useEffect(() => {
     const fetchFlag = async () => {
       try {
-        const res = await fetch("/api/flags?level=5");
-        const data: FlagData = await res.json();
-        if (!res.ok) throw new Error(data.error || "Failed to fetch flag");
+        const res = await fetch("/api/flags?level=5")
+        if (!res.ok) {
+          const errorData = await res.json() // Fetch error message
+          throw new Error(errorData.error || "Failed to fetch flag")
+        }
+
+        const data: FlagData = await res.json()
 
         // Get the obfuscated flag parts
-        const { obfuscatedPart1, obfuscatedPart2 } = data;
+        const { obfuscatedPart1, obfuscatedPart2 } = data
 
         // Decrypt the flag using the provided decryption function
-        const decryptedFlag = decryptFlag(obfuscatedPart1, obfuscatedPart2, key);
+        const decryptedFlag = decryptFlag(obfuscatedPart1, obfuscatedPart2, key)
 
         // Split the decrypted flag into two parts
-        const [part1, part2] = decryptedFlag.split("-IE-");
+        const [part1, part2] = decryptedFlag.split("-IE-")
 
-        const encryptedPart1 = caesarEncrypt(part1, 5); // Encrypt first part
-        const encryptedPart2 = caesarEncrypt(part2, 5); // Encrypt second part
+        const encryptedPart1 = caesarEncrypt(part1, 5) // Encrypt first part
+        const encryptedPart2 = caesarEncrypt(part2, 5) // Encrypt second part
 
         // Combine the encrypted parts with a static -IE- in the middle
-        const encryptedFlag = `${encryptedPart1}-IE-${encryptedPart2}`;
+        const encryptedFlag = `${encryptedPart1}-IE-${encryptedPart2}`
 
         // Set the encrypted flag to state
-        setEncryptedFlag(encryptedFlag);
+        setEncryptedFlag(encryptedFlag)
       } catch (err: any) {
-        setError(err.message);
+        setError(err.message)
       } finally {
-        setLoading(false);
+        setLoading(false)
       }
-    };
+    }
 
-    fetchFlag();
-  }, []);
+    fetchFlag()
+  }, [])
 
   return (
     <LevelLayout level={5}>
@@ -88,5 +92,5 @@ export default function Level5() {
         )}
       </div>
     </LevelLayout>
-  );
+  )
 }
