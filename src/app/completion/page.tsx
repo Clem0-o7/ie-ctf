@@ -1,24 +1,98 @@
-// @/app/completion/page.tsx
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
+"use client"
+
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import LetterGlitch from "@/components/LetterGlitch"
+import Link from "next/link"
+import { useEffect, useState } from "react"
+import { useRouter } from "next/navigation"
 
 export default function CompletionPage() {
+  const [timeTaken, setTimeTaken] = useState<string | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const router = useRouter()
+
+  useEffect(() => {
+    const fetchCompletionTime = async () => {
+      try {
+        const res = await fetch("/api/completion-time")
+        const data = await res.json()
+
+        if (!res.ok) {
+          throw new Error(data.error || "Failed to fetch completion time")
+        }
+
+        setTimeTaken(data.timeTaken)
+      } catch (error: any) {
+        setError(error.message || "Something went wrong.")
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchCompletionTime()
+  }, [])
+
+  const handleLogout = async () => {
+    try {
+      const res = await fetch("/api/session", { method: "POST" });  // Make a POST request to logout
+      const data = await res.json();
+  
+      if (res.ok) {
+        // Redirect to homepage after successful logout
+        router.push("/");
+      } else {
+        setError(data.error || "Logout failed");
+      }
+    } catch (error: any) {
+      setError(error.message || "Something went wrong.");
+    }
+  }
+  
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="max-w-2xl p-8 bg-white rounded-lg shadow-lg text-center">
-        <h1 className="text-4xl font-bold mb-4">🎉 Congratulations!</h1>
-        <p className="text-xl mb-8">
-          You've completed all levels of the IE CTF challenge!
-        </p>
-        <div className="space-y-4">
-          <p>
-            Your completion time has been recorded. Thank you for participating!
-          </p>
-          <Link href="/">
-            <Button>Return to Home</Button>
-          </Link>
-        </div>
+    <>
+      <LetterGlitch />
+      <div className="min-h-screen flex items-center justify-center bg-black/80 text-green-500 p-4">
+        <Card className="w-full max-w-2xl bg-black/60 border-green-500 shadow-lg shadow-green-500/20">
+          <CardHeader>
+            <CardTitle className="text-4xl font-bold text-center text-green-400">🎉 Mission Accomplished</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <p className="text-xl">You've successfully completed all levels of the IE CTF challenge!</p>
+            {loading ? (
+              <div className="flex justify-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-green-500"></div>
+              </div>
+            ) : error ? (
+              <p className="text-red-500">{error}</p>
+            ) : (
+              <>
+                <div className="bg-black/40 p-4 rounded-md">
+                  <p className="text-lg font-mono">
+                    Time Taken: <span className="text-yellow-400">{timeTaken}</span>
+                  </p>
+                </div>
+                <p className="text-lg">Your completion time has been recorded in the system. Well done, hacker!</p>
+              </>
+            )}
+            <div className="space-y-4 pt-4">
+              <Link href="/" className="block">
+                <Button className="w-full bg-green-600 hover:bg-green-700 text-black">Return to Command Center</Button>
+              </Link>
+              <Button
+                onClick={handleLogout}
+                className="w-full bg-green-600 hover:bg-green-700 text-black"
+                variant="outline"
+              >
+                Terminate Session
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
       </div>
-    </div>
-  );
+    </>
+  )
 }
+

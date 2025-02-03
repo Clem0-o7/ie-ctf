@@ -52,39 +52,37 @@ export async function middleware(request: NextRequest) {
             return NextResponse.redirect(new URL('/login', request.url));
         }
 
-        // For level pages, check progression
         if (pathname.startsWith('/levels/')) {
             const level = parseInt(pathname.split('/').pop() || '0');
-            
+        
             // Validate level number
             if (isNaN(level) || level < 0 || level > 6) {
                 return NextResponse.redirect(new URL('/', request.url));
             }
-
+        
             // Allow access to level 0 (tutorial) for all authenticated users
             if (level === 0) {
                 return NextResponse.next();
             }
-
-            // Check if previous level is completed
+        
+            // Check if the previous level is completed
             const previousLevelComplete = user[`level${level - 1}` as keyof typeof user];
-            
+        
             if (!previousLevelComplete) {
-                // Find highest completed level
-                let highestLevel = 0;
-                for (let i = 5; i >= 0; i--) {
-                    if (user[`level${i}`]) {
-                        highestLevel = i;
+                // Find the first uncompleted level
+                let nextLevel = 0;
+                for (let i = 0; i <= 6; i++) {
+                    if (!user[`level${i}`]) {
+                        nextLevel = i;
                         break;
                     }
                 }
                 
-                // Redirect to next uncompleted level
-                return NextResponse.redirect(
-                    new URL(`/levels/${highestLevel}`, request.url)
-                );
+                // Redirect to the next uncompleted level
+                return NextResponse.redirect(new URL(`/levels/${nextLevel}`, request.url));
             }
         }
+        
 
         // Protect completion page
         if (pathname === '/completion' && !user.level6) {
@@ -131,3 +129,4 @@ export const config = {
         '/((?!_next/static|_next/image|favicon.ico).*)',
     ],
 };
+

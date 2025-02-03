@@ -1,5 +1,3 @@
-//@/db/schema.ts
-
 import { pgTable, uuid, varchar, boolean, timestamp, integer } from "drizzle-orm/pg-core";
 
 export const users = pgTable("users", {
@@ -9,7 +7,7 @@ export const users = pgTable("users", {
   department: varchar("department", { length: 255 }).notNull(), // Participant's department
   email: varchar("email", { length: 255 }).unique().notNull(), // Email for login
   password: varchar("password", { length: 255 }).notNull(), // Hashed password
-  
+
   level0: boolean("level0").default(false), // Tutorial Level
   level1: boolean("level1").default(false),
   level2: boolean("level2").default(false),
@@ -18,11 +16,14 @@ export const users = pgTable("users", {
   level5: boolean("level5").default(false),
   level6: boolean("level6").default(false),
 
+  createdAt: timestamp("created_at").defaultNow().notNull(), // Track when user registered
   finalSubmissionTime: timestamp("final_submission_time", { mode: "date" }), // Final submission timestamp
 });
 
 export const flags = pgTable("flags", {
   id: uuid("id").defaultRandom().primaryKey(), // Unique flag ID
   level: integer("level").notNull().unique(), // Level associated with the flag
-  flag: varchar("flag", { length: 255 }).notNull(), // Hashed flag for security
+  flag: varchar("flag", { length: 255 }).notNull(), // Hashed flag for validation
+  obfuscatedPart1: varchar("obfuscatedPart1", { length: 255 }).notNull(), // Store XOR obfuscated Part 1
+  obfuscatedPart2: varchar("obfuscatedPart2", { length: 255 }).notNull(), // Store XOR obfuscated Part 2
 });

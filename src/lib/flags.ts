@@ -4,6 +4,9 @@ import { flags, users } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { getCurrentUser } from "./auth";
 import { compare } from "bcryptjs";
+import { decryptFlag } from "@/lib/crypto";
+
+// @/lib/flags.ts
 
 export async function validateFlag(level: number, submittedFlag: string) {
   try {
@@ -17,8 +20,15 @@ export async function validateFlag(level: number, submittedFlag: string) {
       throw new Error("Invalid level");
     }
 
-    // Compare submitted flag with hashed flag in database
-    const isValid = await compare(submittedFlag.toUpperCase(), flagData.flag);
+    // Decrypt the stored flag before comparing
+    const decryptedFlag = await decryptFlag(flagData.encryptedFlag, flagData.iv);
+
+    if (!decryptedFlag) {
+      throw new Error("Failed to decrypt flag");
+    }
+
+    // Compare decrypted flag with the submitted flag
+    const isValid = submittedFlag.toUpperCase() === decryptedFlag;
 
     if (isValid) {
       // Update user progress if flag is valid
@@ -45,3 +55,6 @@ export async function validateFlag(level: number, submittedFlag: string) {
     throw new Error("Failed to validate flag");
   }
 }
+
+
+

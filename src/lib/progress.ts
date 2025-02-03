@@ -2,9 +2,6 @@
 import { getCurrentUser } from "./auth";
 import { User } from "./types";
 
-// User interface definition (assuming you have this)
-
-
 export interface UserProgress {
   currentLevel: number;
   completedLevels: number[];
@@ -31,12 +28,13 @@ export async function getUserProgress(): Promise<UserProgress | null> {
     if (user[key]) {
       const levelIndex = parseInt(key.replace("level", ""), 10); // Extract index from key
       completedLevels.push(levelIndex);
-      currentLevel = levelIndex + 1;
     }
   }
 
-  // Ensure currentLevel doesn't exceed 6
-  currentLevel = Math.min(currentLevel, 6);
+  // Determine the next level
+  if (completedLevels.length > 0) {
+    currentLevel = Math.min(Math.max(...completedLevels) + 1, 6);
+  }
 
   // Return the user's progress
   return {

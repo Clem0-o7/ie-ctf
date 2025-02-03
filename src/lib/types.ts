@@ -13,3 +13,11 @@ export interface User {
   level5: boolean | null;
   level6: boolean | null;
 }
+
+export interface Flag {
+  id: string;
+  level: number;
+  flag: string;
+  encryptedFlag: string;
+  iv: string;
+}

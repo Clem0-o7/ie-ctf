@@ -76,6 +76,12 @@ export default function LoginPage() {
                         {loading ? "Logging in..." : "Login"}
                     </Button>
                 </form>
+                <Button
+                    onClick={() => router.push("/register")}
+                    className="w-full mt-4 bg-green-400 hover:bg-green-600 text-black font-medium"
+                >
+                    Register
+                </Button>
             </div>
         </div>
     );

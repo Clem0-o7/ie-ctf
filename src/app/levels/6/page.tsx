@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { LevelLayout } from "@/components/level-layout";
 import { useState } from "react";
@@ -38,36 +38,23 @@ export default function Level6() {
 
   return (
     <LevelLayout level={6}>
-      <div className="prose">
-        <h2>Final Challenge</h2>
+      <div className="prose text-white">
+        <h2 className="text-2xl font-bold">Level 6: URL Manipulation</h2>
         <p>
-          For the final challenge, you'll need to combine everything you've learned.
+          Similar to how some techies managed to secure Coldplay concert tickets in India by using the inspect element trick and finding hidden routes, the flag for this level is also hidden.
         </p>
-        <div 
-          className="bg-black text-black hover:text-white transition-colors duration-300"
-          onMouseOver={(e) => {
-            const el = e.currentTarget;
-            setTimeout(() => {
-              el.textContent = "Flag: FINISH-IE-END789";
-            }, 2000);
-          }}
-        >
-          Hover here for 2 seconds...
-        </div>
-        <form onSubmit={handleSubmit}>
-          <input
-            type="text"
-            value={flag}
-            onChange={(e) => setFlag(e.target.value)}
-            placeholder="Enter flag"
-            required
-            className="w-full p-2 border rounded"
-          />
-          <button type="submit" className="mt-2 p-2 bg-blue-500 text-white rounded" disabled={loading}>
-            {loading ? "Submitting..." : "Submit Flag"}
-          </button>
-          {error && <p className="text-red-500 mt-2">{error}</p>}
-        </form>
+        <p>
+          The flag is accessible by navigating to a hidden URL path. Can you figure out which one it is?
+        </p>
+        <p className="mt-4">
+          Hint: The route is the baseurl/[name of your favorite student chapter of TCE-CSE].😁😁😁
+        </p>
+        <p>
+          PS.Opening a new tab might be faster
+        </p>
+
+        
+        {error && <p className="text-red-500 mt-4">{error}</p>}
       </div>
     </LevelLayout>
   );

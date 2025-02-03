@@ -1,0 +1,1 @@
+ALTER TABLE "flags" ADD COLUMN "originalFlag" varchar(255) NOT NULL;

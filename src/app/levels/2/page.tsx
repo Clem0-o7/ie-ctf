@@ -1,68 +1,86 @@
-"use client"
+"use client";
 import { LevelLayout } from "@/components/level-layout";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { decryptFlag } from "@/lib/decryption"; // Import the decryption logic
 
 export default function Level2() {
-  const [flag, setFlag] = useState("");
+  const [obfuscatedPart1, setObfuscatedPart1] = useState(""); // Obfuscated part 1
+  const [obfuscatedPart2, setObfuscatedPart2] = useState(""); // Obfuscated part 2
+  const [decryptedFlag, setDecryptedFlag] = useState<string | null>(null); // Decrypted flag
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [hintMessage, setHintMessage] = useState("");
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
-    setLoading(true);
+  const key = "ctfkey"; 
 
+  useEffect(() => {
+    const fetchFlag = async () => {
+      try {
+        const res = await fetch("/api/flags?level=2");
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || "Failed to fetch flag");
+
+        // Get the obfuscated flag parts
+        const { obfuscatedPart1, obfuscatedPart2 } = data;
+        setObfuscatedPart1(obfuscatedPart1);
+        setObfuscatedPart2(obfuscatedPart2);
+      } catch (err: any) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchFlag();
+  }, []);
+
+  const handleRevealFlag = () => {
     try {
-      const res = await fetch("/api/submit-flag", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ level: 2, flag }),
-      });
+      // Decrypt the flag using the provided decryption logic
+      const fullFlag = decryptFlag(obfuscatedPart1, obfuscatedPart2, key);
 
-      const data = await res.json();
-      
-      if (!res.ok) {
-        throw new Error(data.error);
-      }
-      
-      if (data.success) {
-        window.location.href = "/levels/3";
-      }
-    } catch (error: any) {
-      setError(error.message);
-    } finally {
-      setLoading(false);
+      // Set the decrypted flag to be inspected
+      setDecryptedFlag(fullFlag);
+      setHintMessage("Maybe 'inspecting' me will help find a 'hidden' change to the 'elements'🤭. ");
+    } catch (err) {
+      setHintMessage("Something feels off... Maybe you should try again?");
     }
   };
 
   return (
     <LevelLayout level={2}>
-      <div className="prose">
-        <h2>CSS Tricks</h2>
-        <p>Web developers often hide content using CSS...</p>
-        <div className="relative">
-          <p>Look carefully at this section.</p>
-          <p 
-            className="absolute text-white select-none" 
-            style={{ top: '100px', userSelect: 'none' }}
-          >
-            Flag: WEBDEV-IE-SEC456
-          </p>
-        </div>
-        <form onSubmit={handleSubmit}>
-          <input
-            type="text"
-            value={flag}
-            onChange={(e) => setFlag(e.target.value)}
-            placeholder="Enter flag"
-            required
-            className="w-full p-2 border rounded"
-          />
-          <button type="submit" className="mt-2 p-2 bg-blue-500 text-white rounded" disabled={loading}>
-            {loading ? "Submitting..." : "Submit Flag"}
-          </button>
-          {error && <p className="text-red-500 mt-2">{error}</p>}
-        </form>
+      <div className="prose text-white">
+        <h2 className="text-2xl font-bold">Level 2: Hidden Flag Challenge</h2>
+        <p>
+          A wise hacker once said, "Not everything is visible at first glance." 
+          Can you find what’s hidden between the three dots '...' ?
+        </p>
+
+        {loading ? (
+          <p className="text-yellow-400">Loading challenge...</p>
+        ) : error ? (
+          <p className="text-red-500">{error}</p>
+        ) : (
+          <div className="mt-4 space-y-4">
+            <div className="flex flex-col space-y-4">
+                <p>What secrets doth this button conceal? 🤔🤔🤔</p>
+
+              <Button onClick={handleRevealFlag} className="bg-green-500 hover:bg-green-600 text-black font-medium">
+                Reveal Flag
+              </Button>
+
+              {hintMessage && <p className="mt-4 text-yellow-400">{hintMessage}</p>}
+            </div>
+
+            {/* Hidden decrypted flag */}
+            {decryptedFlag && (
+              <div className="hidden">
+                <p>Your decrypted flag: {decryptedFlag}</p>
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </LevelLayout>
   );

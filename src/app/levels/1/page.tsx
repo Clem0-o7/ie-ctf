@@ -1,69 +1,74 @@
-"use client"
+// @/app/levels/1/page.tsx
 
+"use client";
 import { LevelLayout } from "@/components/level-layout";
 import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { decryptFlag } from "@/lib/decryption"; // Import the decrypt function
 
 export default function Level1() {
-  const [flag, setFlag] = useState("");
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [flagRevealed, setFlagRevealed] = useState(false);
+  const [flag, setFlag] = useState<string | null>(null); // State to store fetched flag
+  const [encodedFlag, setEncodedFlag] = useState<string | null>(null); // State for base64 encoded flag
+  const [error, setError] = useState<string>(""); // For error handling
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
-    setLoading(true);
+  const level = 1; // This would change dynamically as you move through levels
 
+  const handleRevealFlag = async () => {
     try {
-      const res = await fetch("/api/submit-flag", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ level: 1, flag }),
-      });
+      // Fetch flag dynamically from the API (obfuscated flag parts)
+      const response = await fetch(`/api/flags?level=${level}`);
+      const data = await response.json();
 
-      const data = await res.json();
-      
-      if (!res.ok) {
-        throw new Error(data.error);
+      if (response.ok) {
+        const { obfuscatedPart1, obfuscatedPart2 } = data; // Assuming the API returns obfuscated parts
+
+        // Decrypt the flag using the imported decryptFlag function
+        const decryptedFlag = decryptFlag(obfuscatedPart1, obfuscatedPart2, 'ctfkey');
+
+        if (decryptedFlag) {
+          // Encode the decrypted flag into Base64
+          const encoded = btoa(decryptedFlag);
+          setFlag(decryptedFlag);
+          setEncodedFlag(encoded);
+          console.log(`Flag: ${encoded}`); // Log the encoded flag for debugging
+          alert("Its time to learn about logs my friend");   
+        } else {
+          setError("Failed to decrypt the flag.");
+        }
+      } else {
+        setError(data.error); // Handle errors from the API (if any)
       }
-      
-      if (data.success) {
-        window.location.href = "/levels/2";
-      }
-    } catch (error: any) {
-      setError(error.message);
-    } finally {
-      setLoading(false);
+    } catch (error) {
+      setError("Failed to fetch or decrypt the flag. Please try again later.");
     }
+
+    setFlagRevealed(true);
   };
 
   return (
-    <LevelLayout level={1}>
-      <div className="prose">
-        <h2>Level 1</h2>
+    <LevelLayout level={level}>
+      <div className="prose text-white">
+        <h2 className="text-2xl font-bold">Level {level}: Decoding</h2>
+        <p>A quick crash-course:</p>
         <p>
-          This is Level 1. In the final version, you'll need to find the flag through a challenge.
-          For now, you can use the flag shown below:
+          Sometimes, things are hidden in plain sight, just scrambled in '64' ways that only the right 'atob' can unlock. 
+          Think you can crack the 'console'?
         </p>
-        <div className="bg-blue-100 p-4 rounded-lg mb-4">
-          <p className="text-blue-800">Level 1 Flag: [FLAG-FROM-DATABASE]</p>
-        </div>
-        <p className="text-sm text-gray-600">
-          Replace [FLAG-FROM-DATABASE] with the actual flag you generated.
-        </p>
-        <form onSubmit={handleSubmit}>
-          <input
-            type="text"
-            value={flag}
-            onChange={(e) => setFlag(e.target.value)}
-            placeholder="Enter flag"
-            required
-            className="w-full p-2 border rounded"
-          />
-          <button type="submit" className="mt-2 p-2 bg-blue-500 text-white rounded" disabled={loading}>
-            {loading ? "Submitting..." : "Submit Flag"}
-          </button>
-          {error && <p className="text-red-500 mt-2">{error}</p>}
-        </form>
+        <Button onClick={handleRevealFlag} className="bg-blue-500 hover:bg-blue-600 mt-4">
+          Reveal Flag
+        </Button>
+
+        {flagRevealed && encodedFlag && (
+          <div>
+            <p className="mt-4 text-green-400">P.S. Take a quick crash-course on tetrasexagesimal encoding.</p>
+            
+          </div>
+        )}
+
+        {error && (
+          <div className="mt-4 text-red-500">{error}</div>
+        )}
       </div>
     </LevelLayout>
   );
